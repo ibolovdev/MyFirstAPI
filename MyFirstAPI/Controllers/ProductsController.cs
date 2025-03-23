@@ -23,38 +23,113 @@ namespace MyFirstAPI.Controllers
 
 
 
-		//[HttpGet]
-		//public IEnumerable<Product> GetAllProducts()// assumes everything went ok and a status code 200 is returned always
-		//{
-		//	return _context.Products.ToArray();
-		//}
+        //[HttpGet]
+        //public IEnumerable<Product> GetAllProducts()// assumes everything went ok and a status code 200 is returned always
+        //{
+        //	return _context.Products.ToArray();
+        //}
 
 
-		//[HttpGet]
-		//public ActionResult GetAllProducts2()
-		//{
-		//	return Ok(_context.Products.ToArray());
-		//}
+        //[HttpGet]
+        //public ActionResult GetAllProducts2()
+        //{
+        //	return Ok(_context.Products.ToArray());
+        //}
 
 
-		//[HttpGet("{id}")]
-		//public ActionResult GetProduct(int id)
-		//{
-		//	var product = _context.Products.Find(id);
-		//	if (product == null)
-		//	{
-		//		return NotFound();
-		//	}
-		//	return Ok(product);
-		//}
+        //[HttpGet("{id}")]
+        //public ActionResult GetProduct(int id)
+        //{
+        //	var product = _context.Products.Find(id);
+        //	if (product == null)
+        //	{
+        //		return NotFound();
+        //	}
+        //	return Ok(product);
+        //}
 
 
 
-		[HttpGet]
-		public async Task<ActionResult> GetAllProducts()
-		{
-			return Ok(await _context.Products.ToArrayAsync());
-		}
+        //[HttpGet]
+        //public async Task<ActionResult> GetAllProducts()
+        //{
+        //	return Ok(await _context.Products.ToArrayAsync());
+        //}
+
+
+        //http://localhost:5220/api/products?size=4&page=3
+        //[HttpGet]
+        //public async Task<ActionResult> GetAllProducts([FromQuery] QueryParameters queryParameters)
+        //{
+        //    IQueryable<Product> products = _context.Products;
+
+        //    products = products
+        //        .Skip(queryParameters.Size * (queryParameters.Page - 1))
+        //        .Take(queryParameters.Size);
+
+        //    return Ok(await products.ToArrayAsync());
+        //}
+
+
+        //http://localhost:5220/api/products?minPrice=10&maxPrice=100
+        //http://localhost:5220/api/products?minPrice=10&maxPrice=100&sku=AWMGSJ
+        //http://localhost:5220/api/products?name=jeans
+        //http://localhost:5220/api/products?SortBy=Price
+        [HttpGet]
+        public async Task<ActionResult> GetAllProducts([FromQuery] ProductQueryParameters queryParameters)
+        {
+            IQueryable<Product> products = _context.Products;
+
+            if (queryParameters.MinPrice != null)
+            {
+                products = products.Where(
+                    p => p.Price >= queryParameters.MinPrice.Value);
+            }
+
+            if (queryParameters.MaxPrice != null)
+            {
+                products = products.Where(
+                    p => p.Price <= queryParameters.MaxPrice.Value);
+            }
+
+            if (!string.IsNullOrEmpty(queryParameters.SearchTerm))
+            {
+                products = products.Where(
+                    p => p.Sku.ToLower().Contains(queryParameters.SearchTerm.ToLower()) ||
+                         p.Name.ToLower().Contains(queryParameters.SearchTerm.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(queryParameters.Sku))
+            {
+                products = products.Where(
+                    p => p.Sku == queryParameters.Sku);
+            }
+
+            if (!string.IsNullOrEmpty(queryParameters.Name))
+            {
+                products = products.Where(
+                    p => p.Name.ToLower().Contains(
+                        queryParameters.Name.ToLower()));
+            }
+
+
+            if (!string.IsNullOrEmpty(queryParameters.SortBy))
+            {
+                if (typeof(Product).GetProperty(queryParameters.SortBy) != null)
+                {				 
+
+                    products = products.OrderByCustom(
+                        queryParameters.SortBy,
+                        queryParameters.SortOrder);
+                }
+            }
+
+            products = products
+                .Skip(queryParameters.Size * (queryParameters.Page - 1))
+                .Take(queryParameters.Size);
+
+            return Ok(await products.ToArrayAsync());
+        }
 
         //GET - http://localhost:5220/api/products/33
         [HttpGet("{id}")]
