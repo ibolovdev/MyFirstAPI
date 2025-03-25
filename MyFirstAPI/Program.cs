@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using MyFirstAPI.Models;
 
@@ -31,9 +32,9 @@ namespace MyFirstAPI
                 options.AssumeDefaultVersionWhenUnspecified = true;
 
                 //instead of using https://localhost:7233/products?api-version=2.0
-                //	options.ApiVersionReader = new QueryStringApiVersionReader("hps-api-version");//https://localhost:7233/products?hps-api-version=2.0
+                	//options.ApiVersionReader = new QueryStringApiVersionReader("hps-api-version");//https://localhost:7233/products?hps-api-version=2.0
 
-                //options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");// for header versioning
+                options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");// for header versioning
             });
 
 

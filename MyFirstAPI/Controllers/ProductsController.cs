@@ -7,7 +7,8 @@ namespace MyFirstAPI.Controllers
 {
     [ApiVersion("1.0")]
     //[Route("api/[controller]")]
-    [Route("api/v{v:apiVersion}/products")]
+    //[Route("api/v{v:apiVersion}/products")]
+    [Route("products")]
     [ApiController]
 	public class ProductsController : ControllerBase 
 	{
