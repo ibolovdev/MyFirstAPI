@@ -1,26 +1,25 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyFirstAPI.Models;
 
 namespace MyFirstAPI.Controllers
 {
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     //[Route("api/[controller]")]
     [Route("api/v{v:apiVersion}/products")]
     [ApiController]
-	public class ProductsController : ControllerBase 
-	{
+    public class ProductsV2Controller : ControllerBase
+    {
 
 
-		private readonly ShopContext _context;
+        private readonly ShopContext _context;
 
-		public ProductsController(ShopContext context)
-		{
-			_context = context;
+        public ProductsV2Controller(ShopContext context)
+        {
+            _context = context;
 
-			_context.Database.EnsureCreated();
-		}
+            _context.Database.EnsureCreated();
+        }
 
 
 
@@ -85,7 +84,7 @@ namespace MyFirstAPI.Controllers
             if (queryParameters.MinPrice != null)
             {
                 products = products.Where(
-                    p => p.Price >= queryParameters.MinPrice.Value); 
+                    p => p.Price >= queryParameters.MinPrice.Value);
             }
 
             if (queryParameters.MaxPrice != null)
@@ -118,7 +117,7 @@ namespace MyFirstAPI.Controllers
             if (!string.IsNullOrEmpty(queryParameters.SortBy))
             {
                 if (typeof(Product).GetProperty(queryParameters.SortBy) != null)
-                {				 
+                {
 
                     products = products.OrderByCustom(
                         queryParameters.SortBy,
@@ -135,111 +134,108 @@ namespace MyFirstAPI.Controllers
 
         //GET - http://localhost:5220/api/products/33
         [HttpGet("{id}")]
-		public async Task<ActionResult> GetProduct(int id)
-		{
-			var product = await _context.Products.FindAsync(id);
-			if (product == null)
-			{
-				return NotFound();
-			}
-			return Ok(product);
-		}
+        public async Task<ActionResult> GetProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
 
 
-		[HttpPost]
-		public async Task<ActionResult<Product>> PostProduct(Product product)
-		{
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
+        {
 
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-
-
-			_context.Products.Add(product);
-			await _context.SaveChangesAsync();
-
-			return CreatedAtAction(
-				"GetProduct",
-				new { id = product.Id },
-				product);
-		}
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
 
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
 
-		[HttpPut("{id}")]
-		public async Task<ActionResult> PutProduct(int id, Product product)
-		{
-			if (id != product.Id)
-			{
-				return BadRequest();
-			}
+            return CreatedAtAction(
+                "GetProduct",
+                new { id = product.Id },
+                product);
+        }
 
-			_context.Entry(product).State = EntityState.Modified;
 
-			try
-			{
-				await _context.SaveChangesAsync();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!_context.Products.Any(p => p.Id == id))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
 
-			return NoContent();
-		}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutProduct(int id, Product product)
+        {
+            if (id != product.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Products.Any(p => p.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
 
         //DELETE - http://localhost:5220/api/products/34
         [HttpDelete("{id}")]
-		public async Task<ActionResult<Product>> DeleteProduct(int id)
-		{
-			var product = await _context.Products.FindAsync(id);
-			if (product == null)
-			{
-				return NotFound();
-			}
+        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-			_context.Products.Remove(product);
-			await _context.SaveChangesAsync();
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
 
-			return product;
-		}
+            return product;
+        }
 
         //http://localhost:5220/api/products/delete?ids=1&ids=2&ids=3
         [HttpPost]
-		[Route("Delete")]
-		public async Task<ActionResult> DeleteMultiple([FromQuery] int[] ids)
-		{
-			var products = new List<Product>();
-			foreach (var id in ids)
-			{
-				var product = await _context.Products.FindAsync(id);
+        [Route("Delete")]
+        public async Task<ActionResult> DeleteMultiple([FromQuery] int[] ids)
+        {
+            var products = new List<Product>();
+            foreach (var id in ids)
+            {
+                var product = await _context.Products.FindAsync(id);
 
-				if (product == null)
-				{
-					return NotFound();
-				}
+                if (product == null)
+                {
+                    return NotFound();
+                }
 
-				products.Add(product);
-			}
+                products.Add(product);
+            }
 
-			_context.Products.RemoveRange(products);
-			await _context.SaveChangesAsync();
+            _context.Products.RemoveRange(products);
+            await _context.SaveChangesAsync();
 
-			return Ok(products);
-		}
-
-
-	}
+            return Ok(products);
+        }
 
 
-
+    }
 
 }

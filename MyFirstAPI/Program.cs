@@ -23,7 +23,23 @@ namespace MyFirstAPI
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
-			builder.Services.AddDbContext<ShopContext>(options =>
+
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;//I set this to true because then the HTTP response also contains the version number
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+
+                //instead of using https://localhost:7233/products?api-version=2.0
+                //	options.ApiVersionReader = new QueryStringApiVersionReader("hps-api-version");//https://localhost:7233/products?hps-api-version=2.0
+
+                //options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");// for header versioning
+            });
+
+
+
+
+            builder.Services.AddDbContext<ShopContext>(options =>
 			{
 				options.UseInMemoryDatabase("Shop");
 			});
