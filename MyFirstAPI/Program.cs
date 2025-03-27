@@ -53,7 +53,8 @@ namespace MyFirstAPI
 				app.UseSwaggerUI();
 			}
 
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
+			app.UseHsts();
 
 			app.UseAuthorization();
 

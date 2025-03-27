@@ -76,6 +76,9 @@ namespace MyFirstAPI.Controllers
         //http://localhost:5220/api/products?minPrice=10&maxPrice=100&sku=AWMGSJ
         //http://localhost:5220/api/products?name=jeans
         //http://localhost:5220/api/products?SortBy=Price
+        //http://localhost:5220/api/v2.0/products
+        //http://localhost:5220/products?api-version=2.0
+
         [HttpGet]
         public async Task<ActionResult> GetAllProducts([FromQuery] ProductQueryParameters queryParameters)
         {
