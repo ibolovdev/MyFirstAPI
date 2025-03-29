@@ -28,7 +28,19 @@ namespace MyFirstAPI
 				options.UseInMemoryDatabase("Shop");
 			});
 
-			var app = builder.Build();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+					builder
+						.WithOrigins("https://localhost:7109")
+                        .WithHeaders("X-API-Version");
+                });
+            });
+
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
@@ -40,9 +52,9 @@ namespace MyFirstAPI
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();
+            app.UseCors();
 
-
-			app.MapControllers();
+            app.MapControllers();
 
 			app.Run();
 		}
