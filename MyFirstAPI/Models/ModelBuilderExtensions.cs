@@ -15,6 +15,7 @@ namespace MyFirstAPI.Models
 				new Category { Id = 4, Name = "Publications" },
 				new Category { Id = 5, Name = "Supplements" });
 
+
 			modelBuilder.Entity<Product>().HasData(
 				new Product { Id = 1, CategoryId = 1, Name = "Grunge Skater Jeans", Sku = "AWMGSJ", Price = 68, IsAvailable = true },
 				new Product { Id = 2, CategoryId = 1, Name = "Polo Shirt", Sku = "AWMPS", Price = 35, IsAvailable = true },
