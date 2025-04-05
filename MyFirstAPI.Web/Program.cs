@@ -24,6 +24,7 @@ namespace MyFirstAPI.Web
 
             app.UseRouting();
 
+            
             app.UseAuthorization();
 
             app.MapRazorPages();
